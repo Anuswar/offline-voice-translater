@@ -1,4 +1,3 @@
-# speech_recognition_module.py
 import speech_recognition as sr
 
 def listen_for_speech(timeout=4, phrase_time_limit=5):
@@ -17,7 +16,7 @@ def listen_for_speech(timeout=4, phrase_time_limit=5):
             print("Timeout: No speech detected for {} seconds.".format(timeout))
             return None
 
-def recognize_speech(audio, language="ru-RU"):
+def recognize_speech(audio, language="en-US"):
     recognizer = sr.Recognizer()
     try:
         text = recognizer.recognize_google(audio, language=language)

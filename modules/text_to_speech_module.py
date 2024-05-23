@@ -1,20 +1,25 @@
-# text_to_speech_module.py
-import pyttsx3
+from gtts import gTTS
+import os
+import pygame
 
-def initialize_reader():
-    reader = pyttsx3.init()
-    voices = reader.getProperty('voices')
-    
-    # Selecting a female voice with an American accent
-    selected_voice = next((voice for voice in voices if 'en_US' in voice.id and 'female' in voice.id.lower()), None)
-    if selected_voice:
-        reader.setProperty('voice', selected_voice.id)
-    else:
-        print("No matching voice found. Using default.")
-    
-    return reader
-
-def speak_text(reader, text):
+def speak_text(text, lang='hi'):
     print("Reading the translated text...")
-    reader.say(text)
-    reader.runAndWait()
+    tts = gTTS(text=text, lang=lang, slow=False)
+    tts.save("translated_text.mp3")
+    
+    # Initialize pygame mixer
+    pygame.mixer.init()
+    
+    # Load and play the audio file
+    pygame.mixer.music.load("translated_text.mp3")
+    pygame.mixer.music.play()
+    
+    # Wait for the audio to finish playing
+    while pygame.mixer.music.get_busy():
+        continue
+    
+    # Quit the mixer
+    pygame.mixer.quit()
+    
+    # Remove the audio file
+    os.remove("translated_text.mp3")
