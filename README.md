@@ -1,6 +1,6 @@
 # Real-time Voice Translator 🎙️
 
-Welcome to the GitHub repository for a Real-time Voice Translator! This repository contains the source code for a Python script that translates speech from Russian to English in real-time. Feel free to explore, learn, and contribute.
+Welcome to the GitHub repository for a Real-time Voice Translator! This repository contains the source code for a Python script that translates speech between any given languages by default it set to Russian to English in real-time. Feel free to explore, learn, and contribute.
 
 ## ⚙️ Installation
 
