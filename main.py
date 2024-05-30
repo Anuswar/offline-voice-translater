@@ -108,18 +108,26 @@ def getLangCode(lang_name):
 def recognize_speech():
     r = sr.Recognizer()
     with sr.Microphone() as source:
-        print("Listening...")
+        print("Adjusting for ambient noise...")
+        r.adjust_for_ambient_noise(source, duration=1)
+        r.energy_threshold = 4000  # Adjust this value as needed
         r.pause_threshold = 0.5
+
+        print("Listening...")
         audio = r.listen(source)
 
     try:
         print("Recognizing...")
-        query = r.recognize_google(audio, language='en')
+        query = r.recognize_google(audio, language='en', show_all=False)
         print(f"You said: {query}\n")
         return query
-    except Exception as e:
-        print("Please say that again...")
+    except sr.UnknownValueError:
+        print("Google Speech Recognition could not understand audio")
         return None
+    except sr.RequestError as e:
+        print(f"Could not request results from Google Speech Recognition service; {e}")
+        return None
+
 
 def translate_text(text, src_lang, dest_lang):
     translator = Translator()
