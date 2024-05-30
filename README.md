@@ -44,13 +44,15 @@ To run this script locally or make contributions, follow these steps:
 
 The project structure is organized as follows:
 
-- **main.py**: The main Python script containing the real-time voice translation functionality.
-- **modules**: This directory contains submodules for speech recognition, translation, and text-to-speech.
-  - **speech_recognition_module.py**: Handles speech recognition and audio capturing.
-  - **translation_module.py**: Manages translation between Russian and English.
-  - **text_to_speech_module.py**: Converts translated text back to speech.
-- **requirements.txt**: File listing all required dependencies.
-- **README.md**: Documentation for the project (you are here).
+- voice_translation_app/: Root directory of the project.
+    - **images/**: Directory containing image assets for the application.
+        - 01_mic.png: Normal mic button image.
+        - 02_mic.png: Pressed mic button image.
+    - **main.py**: Main application code containing the Kivy app and logic for voice recognition and translation.
+    - **requirements.txt**: List of dependencies required to run the application.
+    - **README.md**: Documentation for the project (you are here).
+    - **LICENSE.md**: License file detailing the terms under which the code can be used.
+    - **buildozer.spec**: Buildozer specification file for packaging the application for Android.
 
 ## 🤝 Contributing
 
