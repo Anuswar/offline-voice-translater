@@ -1,6 +1,6 @@
-# Real-time Voice Translator 🎙️
+# Voice Translator 🎙️
 
-Welcome to the GitHub repository for a Real-time Voice Translator! This repository contains the source code for a Python script that translates speech between any given languages by default it set to Russian to English in real-time. Feel free to explore, learn, and contribute.
+This GitHub repository for a Voice Translator! This repository contains the source code for a Python script that translates speech between any given languages by default it set to English to Hindi. Feel free to explore, learn, and contribute.
 
 ## ⚙️ Installation
 
@@ -8,8 +8,8 @@ To run this script locally or make contributions, follow these steps:
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/real-time-voice-translator.git
-    cd real-time-voice-translator
+    git clone https://github.com/Anuswar/voice-translater-app.git
+    cd voice-translater-app
     ```
 
 2. **Set up a Python virtual environment:**
@@ -22,13 +22,20 @@ To run this script locally or make contributions, follow these steps:
     python3 -m venv venv
     source venv/bin/activate
     ```
+    
+3. **Build installer containing all the files:**
+   - Windows: ```python setup.py bdist_msi```
+   - Linux: ```python setup.py bdist_rpm```
+   - Mac: ```python setup.py bdist_mac```
 
-3. **Install dependencies from requirements.txt:**
+4. **Install dependencies from requirements.txt:**
     ```bash
+    pip install --upgrade wheel
+    
     pip install -r requirements.txt
     ```
 
-4. **Run the main script:**
+5. **Run the main script:**
     ```bash
     python main.py
     ```
