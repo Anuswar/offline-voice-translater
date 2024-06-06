@@ -43,23 +43,30 @@ To run this script locally or make contributions, follow these steps:
 ## 🛠️ Technologies Used
 
 - Python
-- SpeechRecognition library
-- Transformers library for translation
-- Pyttsx3 library for text-to-speech
+- gTTS library for text-to-speech
+- PyAudio library for audio I/O
+- deep-translator library for translation
+- SpeechRecognition library for speech recognition
 
 ## 📂 Project Structure
 
 The project structure is organized as follows:
 
 - voice_translation_app/: Root directory of the project.
-    - **images/**: Directory containing image assets for the application.
-        - 01_mic.png: Normal mic button image.
-        - 02_mic.png: Pressed mic button image.
-    - **main.py**: Main application code containing the Kivy app and logic for voice recognition and translation.
-    - **requirements.txt**: List of dependencies required to run the application.
-    - **README.md**: Documentation for the project (you are here).
+    - **dist/**: Directory containing built distribution files.
+        - voice-translator-2.0.1-win64.msi: Windows installer for version 2.0.1.
+    - **build/**: Directory containing build files.
+        - bdist.win-amd64/
+        - exe.win-amd64-3.10/
+        - exe.win-amd64-3.12/
+    - **.gitignore**: File specifying intentionally untracked files to ignore.
+    - **icon.ico**: Icon file for the executable.
+    - **icon.png**: Icon image file.
     - **LICENSE.md**: License file detailing the terms under which the code can be used.
-    - **buildozer.spec**: Buildozer specification file for packaging the application for Android.
+    - **main.py**: Main application code containing the Kivy app and logic for voice recognition and translation.
+    - **README.md**: Documentation for the project (you are here).
+    - **requirements.txt**: List of dependencies required to run the application.
+    - **setup.py**: Script for building the application installer.
 
 ## 🤝 Contributing
 
