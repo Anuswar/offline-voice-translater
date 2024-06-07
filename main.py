@@ -11,25 +11,38 @@ from deep_translator import GoogleTranslator
 win = tk.Tk()
 
 # Set the geometry of tkinter frame
-win.geometry("700x450")
+win.geometry("400x500")
 win.title("Voice Translator")
 icon = tk.PhotoImage(file="icon.png")
 win.iconphoto(False, icon)
 
-# Create labels and text boxes for the recognized and translated text
-input_label = tk.Label(win, text="Recognized Text ⮯")
-input_label.pack(pady=(10, 5))
-input_text = tk.Text(win, height=5, width=50)
-input_text.pack(pady=(0, 20))
+# Function to perform text-to-speech
+def speak_text(text, lang):
+    try:
+        tts = gTTS(text, lang=lang)
+        tts.save("temp_audio.mp3")
+        playsound("temp_audio.mp3", block=False)
+        os.remove("temp_audio.mp3")
+    except Exception as e:
+        print(f"Error in TTS: {e}")
 
-output_label = tk.Label(win, text="Translated Text ⮯")
-output_label.pack(pady=(10, 5))
-output_text = tk.Text(win, height=5, width=50)
-output_text.pack(pady=(0, 20))
+# Create a scrollable frame for chat messages
+chat_canvas = tk.Canvas(win)
+chat_scrollbar = tk.Scrollbar(win, orient="vertical", command=chat_canvas.yview)
+chat_frame = tk.Frame(chat_canvas)
 
-# Create the "Start Translation" button
-run_button = tk.Button(win, text="Start Translation", command=lambda: run_translator())
-run_button.pack(pady=(20, 10))
+chat_frame.bind(
+    "<Configure>",
+    lambda e: chat_canvas.configure(
+        scrollregion=chat_canvas.bbox("all")
+    )
+)
+
+chat_canvas.create_window((0, 0), window=chat_frame, anchor="nw")
+chat_canvas.configure(yscrollcommand=chat_scrollbar.set)
+
+chat_canvas.pack(side="top", fill="both", expand=True)
+chat_scrollbar.pack(side="right", fill="y")
 
 # Create a dictionary of language names and codes
 language_codes = {
@@ -38,26 +51,24 @@ language_codes = {
 
 language_names = list(language_codes.keys())
 
-# Create dropdown menus for the input and output languages
-frame = tk.Frame(win)
-frame.pack(pady=(10, 5))
+# Create the "Start Translation" button
+run_button = tk.Button(win, text="Start Translation", command=lambda: run_translator())
+run_button.pack(pady=(10, 10))
 
-input_lang_label = tk.Label(frame, text="Input Language:")
-input_lang_label.grid(row=0, column=0, padx=(10, 5), pady=(10, 5))
+# Create a frame for language selection and button
+control_frame = tk.Frame(win)
+control_frame.pack(pady=(10, 5))
 
-input_lang = ttk.Combobox(frame, values=language_names)
+input_lang = ttk.Combobox(control_frame, values=language_names, width=15)
 if input_lang.get() == "": input_lang.set("English")
-input_lang.grid(row=1, column=0, padx=(10, 5), pady=(0, 10))
+input_lang.grid(row=0, column=0, padx=(5, 5), pady=(5, 5))
 
-swap_button = tk.Button(frame, text="↔", command=lambda: swap_languages())
-swap_button.grid(row=1, column=1, padx=(0, 5), pady=(0, 10))
+swap_button = tk.Button(control_frame, text="↔", command=lambda: swap_languages())
+swap_button.grid(row=0, column=1, padx=(5, 5), pady=(5, 5))
 
-output_lang_label = tk.Label(frame, text="Output Language:")
-output_lang_label.grid(row=0, column=2, padx=(5, 10), pady=(10, 5))
-
-output_lang = ttk.Combobox(frame, values=language_names)
+output_lang = ttk.Combobox(control_frame, values=language_names, width=15)
 if output_lang.get() == "": output_lang.set("Hindi")
-output_lang.grid(row=1, column=2, padx=(5, 10), pady=(0, 10))
+output_lang.grid(row=0, column=2, padx=(5, 5), pady=(5, 5))
 
 # Initialize Speech Recognizer
 recognizer = sr.Recognizer()
@@ -77,6 +88,20 @@ def swap_languages():
     output_lang.set(input_lang_val)
     current_input_lang, current_output_lang = current_output_lang, current_input_lang
 
+def add_message(frame, text, lang, is_input=True):
+    msg_frame = tk.Frame(frame, bg="lightgrey" if is_input else "lightblue", padx=5, pady=5)
+    msg_frame.pack(anchor="center", pady=5, padx=10)
+
+    text_label = tk.Label(msg_frame, text=text, wraplength=250, justify="left", bg=msg_frame.cget("bg"))
+    text_label.pack(side="left", fill="x", expand=True)
+
+    tts_button = tk.Button(msg_frame, text="🔊", command=lambda: speak_text(text, lang))
+    tts_button.pack(side="left")
+
+    # Scroll to the end of the chat
+    chat_canvas.update_idletasks()
+    chat_canvas.yview_moveto(1.0)
+
 def update_translation():
     run_button.config(state=tk.DISABLED)
     run_button.config(text="Listening...")
@@ -88,14 +113,14 @@ def update_translation():
 
         try:
             speech_text = recognizer.recognize_google(audio)
-            input_text.insert(tk.END, f"{speech_text}\n")
+            add_message(chat_frame, speech_text, language_codes[input_lang.get()], is_input=True)
             if speech_text.lower() in {'exit', 'stop'}:
                 run_button.config(text="Start Translation", state=tk.NORMAL)
                 return
 
             # Translate from input language to output language
             translated_text = GoogleTranslator(source=language_codes[input_lang.get()], target=language_codes[output_lang.get()]).translate(text=speech_text)
-            output_text.insert(tk.END, translated_text + "\n")
+            add_message(chat_frame, translated_text, language_codes[output_lang.get()], is_input=False)
             voice = gTTS(translated_text, lang=language_codes[output_lang.get()], slow=False)
             voice.save('voice.mp3')
             playsound('voice.mp3', block=False)
@@ -103,11 +128,11 @@ def update_translation():
             swap_languages()  # Swap languages after each translation
 
         except sr.UnknownValueError:
-            output_text.insert(tk.END, "Could not understand!\n")
+            add_message(chat_frame, "Could not understand!", "en")
         except sr.RequestError:
-            output_text.insert(tk.END, "Could not request from Google!\n")
+            add_message(chat_frame, "Could not request from Google!", "en")
         except Exception as e:
-            output_text.insert(tk.END, f"Error: {e}\n")
+            add_message(chat_frame, f"Error: {e}", "en")
 
     run_button.config(text="Start Translation", state=tk.NORMAL)
 
